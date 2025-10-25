@@ -130,6 +130,8 @@ pub struct XYDataset {
     pub(crate) fill: String,
     #[serde(skip_serializing_if = "Option::is_none")]
     pub(crate) grouped: Option<bool>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub(crate) hidden: Option<bool>,
     #[serde(skip_serializing_if = "NumberString::is_empty", default)]
     pub(crate) hitRadius: NumberString,
     #[serde(skip_serializing_if = "String::is_empty", default)]
@@ -170,8 +172,12 @@ pub struct XYDataset {
     pub(crate) pointRadius: NumberString,
     #[serde(skip_serializing_if = "String::is_empty", default)]
     pub(crate) pointStyle: String,
+    #[serde(skip_serializing_if = "NumberString::is_empty")]
+    pub(crate) rotation: NumberString,
     #[serde(skip_serializing_if = "Option::is_none")]
     pub(crate) segment: Option<Segment>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub(crate) showLine: Option<bool>,
     #[serde(skip_serializing_if = "Option::is_none")]
     pub(crate) skipNull: Option<bool>,
     #[serde(skip_serializing_if = "Option::is_none")]
@@ -314,6 +320,8 @@ pub struct XYPoint {
 pub struct ChartOptions {
     #[serde(skip_serializing_if = "Option::is_none")]
     pub(crate) animation: Option<Animation>,
+    #[serde(skip_serializing_if = "NumberString::is_empty")]
+    pub(crate) aspectRatio: NumberString,
     #[serde(skip_serializing_if = "Option::is_none")]
     pub(crate) elements: Option<ChartElements>,
     #[serde(skip_serializing_if = "Option::is_none")]
@@ -324,6 +332,8 @@ pub struct ChartOptions {
     pub(crate) legend: Option<ChartLegend>,
     #[serde(skip_serializing_if = "Option::is_none")]
     pub(crate) layout: Option<ChartLayout>,
+    #[serde(skip_serializing_if = "String::is_empty")]
+    pub(crate) locale: String,
     #[serde(skip_serializing_if = "Option::is_none")]
     pub(crate) maintainAspectRatio: Option<bool>,
     #[serde(skip_serializing_if = "Option::is_none")]
@@ -356,6 +366,9 @@ pub struct ChartPlugins {
     pub(crate) title: Option<Title>,
     #[serde(skip_serializing_if = "Option::is_none")]
     pub(crate) tooltip: Option<TooltipPlugin>,
+    // https://github.com/chartjs/chartjs-plugin-zoom
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub(crate) zoom: Option<PluginZoom>,
 }
 
 #[derive(Debug, Clone, Deserialize, Serialize, Default, PartialEq, Eq, PartialOrd, Ord)]
@@ -411,6 +424,8 @@ pub struct TooltipPlugin {
     pub(crate) titleColor: String,
     #[serde(skip_serializing_if = "NumberString::is_empty", default)]
     pub(crate) titleMarginBottom: NumberString,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub(crate) usePointStyle: Option<bool>,
 }
 
 #[derive(Debug, Clone, Deserialize, Serialize, Default, PartialEq, Eq, PartialOrd, Ord)]
@@ -431,6 +446,8 @@ pub struct TooltipCallbacks {
 
 #[derive(Debug, Clone, Deserialize, Serialize, Default, PartialEq, Eq, PartialOrd, Ord)]
 pub struct ChartScale {
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub(crate) adapters: Option<ScaleAdapters>,
     #[serde(skip_serializing_if = "FnWithArgs::is_empty", skip_deserializing)]
     // FnWithArgs can't deser right now, might be solved in the future with a fancy serde deserializer
     pub(crate) afterBuildTicks: FnWithArgs<1>,
@@ -608,8 +625,14 @@ pub struct LineAnnotation {
     pub(crate) drawTime: String,
     #[serde(skip_serializing_if = "Option::is_none")]
     pub(crate) label: Option<LabelAnnotation>,
+    #[serde(skip_serializing_if = "String::is_empty")]
+    pub(crate) mode: String,
+    #[serde(skip_serializing_if = "String::is_empty")]
+    pub(crate) scaleID: String,
     #[serde(default, rename = "type")]
     pub(crate) r#type: LineAnnotationType,
+    #[serde(skip_serializing_if = "NumberString::is_empty")]
+    pub(crate) value: NumberString,
     #[serde(skip_serializing_if = "NumberOrDateString::is_empty", default)]
     pub(crate) xMax: NumberOrDateString,
     #[serde(skip_serializing_if = "NumberOrDateString::is_empty", default)]
@@ -654,6 +677,8 @@ pub struct BoxAnnotationType;
 pub struct ScaleTime {
     #[serde(skip_serializing_if = "Option::is_none")]
     pub(crate) displayFormats: Option<DisplayFormats>,
+    #[serde(skip_serializing_if = "String::is_empty")]
+    pub(crate) tooltipFormat: String,
     #[serde(skip_serializing_if = "String::is_empty", default)]
     pub(crate) unit: String,
 }
@@ -1078,3 +1103,125 @@ impl<'de> Deserialize<'de> for LabelAnnotationType {
     }
 }
 //
+#[derive(Debug, Clone, Deserialize, Serialize, Default, PartialEq, Eq, PartialOrd, Ord)]
+pub struct ScaleAdapters {
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub(crate) date: Option<ScaleAdaptersDate>,
+}
+
+#[derive(Debug, Clone, Deserialize, Serialize, Default, PartialEq, Eq, PartialOrd, Ord)]
+pub struct ScaleAdaptersDate {
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub(crate) outputCalendar: Option<String>,
+}
+
+#[derive(Debug, Clone, Deserialize, Serialize, Default, PartialEq, Eq)]
+pub struct PluginZoom {
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub(crate) pan: Option<ZoomPan>,
+
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub(crate) limits: Option<HashMap<String, ZoomLimit>>,
+
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub(crate) zoom: Option<ZoomZoom>,
+}
+
+#[derive(Debug, Clone, Deserialize, Serialize, Default, PartialEq, Eq, PartialOrd, Ord)]
+pub struct ZoomLimit {
+    #[serde(skip_serializing_if = "NumberString::is_empty")]
+    pub(crate) min: NumberString,
+
+    #[serde(skip_serializing_if = "NumberString::is_empty")]
+    pub(crate) max: NumberString,
+
+    #[serde(skip_serializing_if = "NumberString::is_empty")]
+    pub(crate) minRange: NumberString,
+}
+
+#[derive(Debug, Clone, Deserialize, Serialize, Default, PartialEq, Eq, PartialOrd, Ord)]
+pub struct ZoomPan {
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub(crate) enabled: Option<bool>,
+
+    #[serde(skip_serializing_if = "String::is_empty")]
+    pub(crate) mode: String,
+
+    #[serde(skip_serializing_if = "String::is_empty")]
+    pub(crate) modifierKey: String,
+
+    #[serde(skip_serializing_if = "String::is_empty")]
+    pub(crate) overScaleMode: String,
+
+    #[serde(skip_serializing_if = "String::is_empty")]
+    pub(crate) scaleMode: String,
+
+    #[serde(skip_serializing_if = "NumberString::is_empty")]
+    pub(crate) threshold: NumberString,
+}
+
+#[derive(Debug, Clone, Deserialize, Serialize, Default, PartialEq, Eq, PartialOrd, Ord)]
+pub struct ZoomZoom {
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub(crate) enabled: Option<bool>,
+
+    #[serde(skip_serializing_if = "String::is_empty")]
+    pub(crate) mode: String,
+
+    #[serde(skip_serializing_if = "String::is_empty")]
+    pub(crate) overScaleMode: String,
+
+    #[serde(skip_serializing_if = "String::is_empty")]
+    pub(crate) scaleMode: String,
+
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub(crate) drag: Option<ZoomDragOptions>,
+
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub(crate) pinch: Option<ZoomPinchOptions>,
+
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub(crate) wheel: Option<ZoomWheelOptions>,
+}
+
+#[derive(Debug, Clone, Deserialize, Serialize, Default, PartialEq, Eq, PartialOrd, Ord)]
+pub struct ZoomDragOptions {
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub(crate) enabled: Option<bool>,
+
+    #[serde(skip_serializing_if = "String::is_empty")]
+    pub(crate) backgroundColor: String,
+
+    #[serde(skip_serializing_if = "String::is_empty")]
+    pub(crate) borderColor: String,
+
+    #[serde(skip_serializing_if = "NumberString::is_empty")]
+    pub(crate) borderWidth: NumberString,
+
+    #[serde(skip_serializing_if = "String::is_empty")]
+    pub(crate) drawTime: String,
+
+    #[serde(skip_serializing_if = "String::is_empty")]
+    pub(crate) modifierKey: String,
+
+    #[serde(skip_serializing_if = "NumberString::is_empty")]
+    pub(crate) threshold: NumberString,
+}
+
+#[derive(Debug, Clone, Deserialize, Serialize, Default, PartialEq, Eq, PartialOrd, Ord)]
+pub struct ZoomWheelOptions {
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub(crate) enabled: Option<bool>,
+
+    #[serde(skip_serializing_if = "String::is_empty")]
+    pub(crate) modifierKey: String,
+
+    #[serde(skip_serializing_if = "NumberString::is_empty")]
+    pub(crate) speed: NumberString,
+}
+
+#[derive(Debug, Clone, Deserialize, Serialize, Default, PartialEq, Eq, PartialOrd, Ord)]
+pub struct ZoomPinchOptions {
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub(crate) enabled: Option<bool>,
+}

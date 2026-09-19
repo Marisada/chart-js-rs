@@ -7,7 +7,13 @@
 //! through `gloo-utils` (already a dependency), so this stays on stable Rust.
 
 use js_sys::{Array, Function, Reflect};
+use std::{
+    collections::HashMap,
+    sync::{LazyLock, Mutex},
+};
 use wasm_bindgen::{JsCast, JsValue};
+
+static ACTIVE_CHART: LazyLock<Mutex<HashMap<String, JsValue>>> = LazyLock::new(|| Mutex::new(HashMap::new()));
 
 /// The global `Chart` (set by the Chart.js UMD `<script>` on the page).
 fn chart_global() -> JsValue {
@@ -127,8 +133,31 @@ pub fn render_chart(v: JsValue, id: &str, mutate: bool, plugins: String, default
         return;
     };
     if let Ok(ctor) = chart_global().dyn_into::<Function>() {
-        // new Chart(el, obj)
-        let _ = Reflect::construct(&ctor, &Array::of2(&el.into(), &obj));
+        // live_chart(id) always return UNDEFINED, so store in HashMap instead
+        if let Ok(mut lock) = ACTIVE_CHART.lock() {
+            if let Some(old) = lock.get(id) {
+                // chart.destroy()
+                if let Ok(destroy) = Reflect::get(old, &"destroy".into()).and_then(|jsv| jsv.dyn_into::<Function>()) {
+                    destroy.call0(old).unwrap();
+                }
+            }
+
+            // new Chart(el, obj)
+            if let Ok(new) = Reflect::construct(&ctor, &Array::of2(&el.into(), &obj)) {
+                lock.entry(id.to_owned()).and_modify(|v| *v = new.clone()).or_insert(new);
+            }
+        }
+    }
+}
+
+pub fn destroy(id: &str) {
+    if let Ok(mut lock) = ACTIVE_CHART.lock() {
+        if let Some(old) = lock.remove(id) {
+            // chart.destroy()
+            if let Ok(destroy) = Reflect::get(&old, &"destroy".into()).and_then(|jsv| jsv.dyn_into::<Function>()) {
+                destroy.call0(&old).unwrap();
+            }
+        }
     }
 }
 

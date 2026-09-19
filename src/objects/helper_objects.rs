@@ -453,12 +453,12 @@ impl FnWithArgs<1> {
         Reflect::set(&js_window, &JsValue::from_str(&id), js_sys_fn).unwrap();
         js_closure.forget();
 
-        gloo_console::debug!(format!(
-            "Closure at {}:{}:{} set at window.['{id}'].",
-            file!(),
-            line!(),
-            column!()
-        ));
+        // gloo_console::debug!(format!(
+        //     "Closure at {}:{}:{} set at window.['{id}'].",
+        //     file!(),
+        //     line!(),
+        //     column!()
+        // ));
         self.closure_id = Some(id);
         self
     }
@@ -497,12 +497,12 @@ impl FnWithArgs<2> {
         Reflect::set(&js_window, &JsValue::from_str(&id), js_sys_fn).unwrap();
         js_closure.forget();
 
-        gloo_console::debug!(format!(
-            "Closure at {}:{}:{} set at window.['{id}'].",
-            file!(),
-            line!(),
-            column!()
-        ));
+        // gloo_console::debug!(format!(
+        //     "Closure at {}:{}:{} set at window.['{id}'].",
+        //     file!(),
+        //     line!(),
+        //     column!()
+        // ));
         self.closure_id = Some(id);
         self
     }
@@ -541,12 +541,12 @@ impl FnWithArgs<3> {
         Reflect::set(&js_window, &JsValue::from_str(&id), js_sys_fn).unwrap();
         js_closure.forget();
 
-        gloo_console::debug!(format!(
-            "Closure at {}:{}:{} set at window.['{id}'].",
-            file!(),
-            line!(),
-            column!()
-        ));
+        // gloo_console::debug!(format!(
+        //     "Closure at {}:{}:{} set at window.['{id}'].",
+        //     file!(),
+        //     line!(),
+        //     column!()
+        // ));
         self.closure_id = Some(id);
         self
     }
@@ -585,12 +585,12 @@ impl FnWithArgs<4> {
         Reflect::set(&js_window, &JsValue::from_str(&id), js_sys_fn).unwrap();
         js_closure.forget();
 
-        gloo_console::debug!(format!(
-            "Closure at {}:{}:{} set at window.['{id}'].",
-            file!(),
-            line!(),
-            column!()
-        ));
+        // gloo_console::debug!(format!(
+        //     "Closure at {}:{}:{} set at window.['{id}'].",
+        //     file!(),
+        //     line!(),
+        //     column!()
+        // ));
         self.closure_id = Some(id);
         self
     }
@@ -628,12 +628,12 @@ impl FnWithArgs<5> {
         Reflect::set(&js_window, &JsValue::from_str(&id), js_sys_fn).unwrap();
         js_closure.forget();
 
-        gloo_console::debug!(format!(
-            "Closure at {}:{}:{} set at window.['{id}'].",
-            file!(),
-            line!(),
-            column!()
-        ));
+        // gloo_console::debug!(format!(
+        //     "Closure at {}:{}:{} set at window.['{id}'].",
+        //     file!(),
+        //     line!(),
+        //     column!()
+        // ));
         self.closure_id = Some(id);
         self
     }
@@ -676,12 +676,12 @@ impl FnWithArgs<6> {
         Reflect::set(&js_window, &JsValue::from_str(&id), js_sys_fn).unwrap();
         js_closure.forget();
 
-        gloo_console::debug!(format!(
-            "Closure at {}:{}:{} set at window.['{id}'].",
-            file!(),
-            line!(),
-            column!()
-        ));
+        // gloo_console::debug!(format!(
+        //     "Closure at {}:{}:{} set at window.['{id}'].",
+        //     file!(),
+        //     line!(),
+        //     column!()
+        // ));
         self.closure_id = Some(id);
         self
     }
@@ -727,12 +727,12 @@ impl FnWithArgs<7> {
         Reflect::set(&js_window, &JsValue::from_str(&id), js_sys_fn).unwrap();
         js_closure.forget();
 
-        gloo_console::debug!(format!(
-            "Closure at {}:{}:{} set at window.['{id}'].",
-            file!(),
-            line!(),
-            column!()
-        ));
+        // gloo_console::debug!(format!(
+        //     "Closure at {}:{}:{} set at window.['{id}'].",
+        //     file!(),
+        //     line!(),
+        //     column!()
+        // ));
         self.closure_id = Some(id);
         self
     }

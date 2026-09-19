@@ -123,6 +123,10 @@ impl Chart {
         self.to_owned()
     }
 
+    pub fn destroy(self) {
+        destroy(&self.id);
+    }
+
     /// This should not be used on a chart with a worker attached.
     /// If it is, it will do nothing.
     pub fn render(self) {
